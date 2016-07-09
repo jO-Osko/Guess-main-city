@@ -31,11 +31,13 @@ class BaseHandler(webapp2.RequestHandler):
 
 class MainHandler(BaseHandler):
     def get(self):
+        '''
         def city_guess(Cities):
             return random.choice(Cities)
 
         mesta = dict()
         mesta["city_guess"] = city_guess(Cities)
+        '''
 
         return self.render_template("main.html")
 
@@ -45,13 +47,17 @@ class MainHandler(BaseHandler):
         # ali pa static mapa s slikami, da niso dolgi hrefi in do njih dostopanje
         city = self.request.get("city_name")
 
+        def city_guess(Cities):
+            return random.choice(Cities)
+
         def guess_city_name(city):
-            if city == city:
+            if city == city_guess(Cities):
                 return "You've guessed the main city of this country."
             else:
                 return "You haven't guessed the main city of this country."
 
         mesta = dict()
+        mesta["city_guess"] = city_guess(Cities)
         mesta["guess_city_name"] = guess_city_name(city)
 
         self.write("entered was: " + city)
