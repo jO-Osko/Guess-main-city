@@ -30,48 +30,59 @@ class BaseHandler(webapp2.RequestHandler):
 
 
 class MainHandler(BaseHandler):
+
+    # Ce nekaj potrebujemo veckrat to najraje damo v posebno metodo
+    def city_guess(self, cities):
+        return random.choice(cities)
+
     def get(self):
-        '''
-        def city_guess(Cities):
-            return random.choice(Cities)
-
         mesta = dict()
-        mesta["city_guess"] = city_guess(Cities)
-        '''
+        mesta["city_guess"] = self.city_guess(Cities)
 
-        return self.render_template("main.html")
+        return self.render_template("main.html", params=mesta)
 
     def post(self):
         # random select, choice za random zadeve
         # drugace pa v href v html
         # ali pa static mapa s slikami, da niso dolgi hrefi in do njih dostopanje
-        city = self.request.get("city_name")
+        answered_city = self.request.get("city_name")
 
-        def city_guess(Cities):
-            return random.choice(Cities)
+        city_id = int(self.request.get("city_id"))  # Nekako si je potrebno zapomniti, katero mesto je bilo na zacetku izbrano kot pravilni odgovor.
 
-        def guess_city_name(city):
-            if city == city_guess(Cities):
-                return "You've guessed the main city of this country."
-            else:
-                return "You haven't guessed the main city of this country."
+        # Sedaj dobimo pravilni odgovor (poiscemo mesto po id-ju, ter vzamemo njegovo ime)
+
+        correct_city = None
+
+        # To bi bilo bolj pravilno z uporabo slovarja, ki bi iz
+
+        for city in Cities:
+            if city.city_id == city_id:
+                correct_city = city
+                break
+        else:  # to se izvede, ce for loop ni bil breakan
+            print("Nekdo se je poigral z naso spletno stranjo")
+            correct_city = Cities[0]  # Nastavimo pravo mesto na prvo mest
+
+        if answered_city == correct_city.name:
+            result = "You've guessed the main city of this country."
+        else:
+            result = "You haven't guessed the main city of this country."
 
         mesta = dict()
-        mesta["city_guess"] = city_guess(Cities)
-        mesta["guess_city_name"] = guess_city_name(city)
-
-        self.write("entered was: " + city)
+        mesta["city_guess"] = self.city_guess(Cities)
+        mesta["guess_city_name"] = result
+        mesta["message"] = "entered was: " + answered_city
 
         return self.render_template("main.html", params=mesta)
 
-Ljubljana = City("Ljubljana", "Slovenia", "https://www.visitljubljana.com/assets/tiles/_resampled/FillWzExMzIsNTU4XQ/19-green-capital-tours.jpg")
-Zagreb = City("Zagreb", "Croatia", "http://www.summer-ballet-croatia.com/zagreb.jpg")
-Beograd = City("Beograd", "Serbia", "https://upload.wikimedia.org/wikipedia/commons/d/d1/Belgrade_iz_balona.jpg")
-Vienna = City("Vienna", "Austria", "http://www.austria.info/media/17083/thumbnails/stadtansicht-wien--oesterreich-werbung-julius-silver--d.jpg.3146489.jpg")
-Rome = City("Rome", "Italy", "http://www.accunet.org/images/Rome%20Seminar/Rome.jpg")
-Berlin = City("Berlin", "Germany", "https://fly.stanstedairport.com/travel/images/destination_carousel_berlin")
-London = City("London", "England", "https://media.timeout.com/images/100644443/image.jpg")
-Paris = City("Paris", "France", "http://www.premiumtours.co.uk/images/product/original/67_1.jpg")
+Ljubljana = City("Ljubljana", "Slovenia", "https://www.visitljubljana.com/assets/tiles/_resampled/FillWzExMzIsNTU4XQ/19-green-capital-tours.jpg", 1)
+Zagreb = City("Zagreb", "Croatia", "http://www.summer-ballet-croatia.com/zagreb.jpg", 2)
+Beograd = City("Beograd", "Serbia", "https://upload.wikimedia.org/wikipedia/commons/d/d1/Belgrade_iz_balona.jpg", 3)
+Vienna = City("Vienna", "Austria", "http://www.austria.info/media/17083/thumbnails/stadtansicht-wien--oesterreich-werbung-julius-silver--d.jpg.3146489.jpg", 4)
+Rome = City("Rome", "Italy", "http://www.accunet.org/images/Rome%20Seminar/Rome.jpg", 5)
+Berlin = City("Berlin", "Germany", "https://fly.stanstedairport.com/travel/images/destination_carousel_berlin", 6)
+London = City("London", "England", "https://media.timeout.com/images/100644443/image.jpg", 7)
+Paris = City("Paris", "France", "http://www.premiumtours.co.uk/images/product/original/67_1.jpg", 8)
 
 Cities = [Ljubljana, Zagreb, Beograd, Vienna, Rome, Berlin, London, Paris]
 

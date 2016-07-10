@@ -18,8 +18,11 @@
     </head>
 
     <body>
+        {{ message }}
         <p>{{ guess_city_name }}</p>
         <form method="post" action="/">
+            {# Spodnjo vrstico imamo zato, da si hkrati z odgovorom posljemo tudi katero mesto smo sploh hoteli za odgovor #}
+            <input type="number" name="city_id" value="{{ city_guess.city_id }}" hidden>
             <label for="country_guesser">Guess a country's main city:</label>
             <br>
             <br>
